@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Ai - Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/matura-mt-script-capitals');
+
+        body {
+            background-color: rgba(26, 24, 24, 0.95);
+            color: aliceblue;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        header {
+            background-color: rgb(27, 26, 26);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            font-family: 'Matura MT Script Capitals', sans-serif;
+        }
+
+        .chat-container {
+            height: calc(100vh - 180px);
+            scrollbar-width: thin;
+            scrollbar-color: #4a5568 #1a1a1a;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 20px;
+        }
+
+        .user-bubble {
+            background-color: #4c3e85;
+            border-radius: 18px 18px 0 18px;
+            align-self: flex-end;
+        }
+
+        .ai-bubble {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 18px 18px 18px 0;
+            align-self: flex-start;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #00ffff;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .glass-input {
+            background: rgba(45, 45, 45, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+    <header class="p-4 text-center sticky top-0 z-50">
+        <div class="flex justify-between items-center max-w-4xl mx-auto">
+            <a href="index.html" class="text-[#6d6197] hover:text-red-600 transition-all text-xl">Home</a>
+            <h1 class="text-3xl text-white">Top Ai Assistant</h1>
+            <div class="w-10"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col max-w-4xl mx-auto w-full p-4 overflow-hidden">
+        <!-- Chat History -->
+        <div id="chat-container" class="chat-container flex flex-col gap-4 overflow-y-auto mb-4 p-2">
+            <div class="ai-bubble p-4 max-w-[85%] animate-fade-in shadow-lg">
+                <p class="text-cyan-400 font-bold mb-1">Top Ai Guide</p>
+                Hello! I am your Top Ai Assistant. I know everything about the tools listed in this app. 
+                <br><br>
+                Ask me things like:
+                <ul class="list-disc ml-5 mt-2 text-sm text-gray-300">
+                    <li>"What's the best AI for coding?"</li>
+                    <li>"Which tool can help me with marketing copy?"</li>
+                    <li>"What is Perplexity used for?"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="relative">
+            <div id="typing-indicator" class="typing-indicator hidden absolute -top-8 left-4">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="glass-input flex items-center p-2 rounded-2xl shadow-2xl">
+                <input type="text" id="user-input" 
+                    class="flex-grow bg-transparent border-none outline-none text-white px-4 py-3 placeholder-gray-500"
+                    placeholder="Ask about any AI tool...">
+                <button id="send-btn" class="bg-[#4c3e85] hover:bg-[#5d4ea5] text-white p-3 rounded-xl transition-all ml-2">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const apiKey = ""; // Provided at runtime
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        const systemPrompt = `
+        You are the "Top Ai Guide", the official assistant for the "Top Ai" application created by Dev.muhammad.
+        You have complete knowledge of the tools listed in the app:
+        
+        1. CATEGORIES & TOOLS:
+           - WRITING & CONTENT: ChatGPT (All-around help), Jasper AI (Marketing), Writesonic (Blogs), Copy.ai (Ads/Landing pages), Quillbot (Rewriting).
+           - DESIGN & VISUAL: Canva AI (Graphic design), DALL-E (Text-to-image), Midjourney (Artistic prompts), Runway (Video/Image AI).
+           - BUSINESS & PRODUCTIVITY: Trello AI (Project planning), Claude AI (Safe long responses), Bing AI (Real-time search), Notion AI (Assistant in docs).
+           - LEARNING: Perplexity (Search with citations), Duolingo (Languages), Wolfram Alpha (Math/Science), Khan Academy (Education).
+           - ON-THE-GO: ChatGPT Mobile, Google AI (Gemini), Replika (Companion), Photoshop Express (Mobile editing).
+
+        2. APP INFO:
+           - Created by: Dev.muhammad.
+           - Purpose: To bring powerful and useful AI tools into one place for learning, business, and writing.
+        
+        INSTRUCTIONS:
+        - Be professional, helpful, and concise.
+        - If a user asks for a recommendation, refer to the specific tools above.
+        - Always encourage them to visit the specific page (e.g., "Check the Design section for DALL-E").
+        - Mention that the app is a curated collection for Computer Software Engineering students and pros.
+        `;
+
+        async function callGemini(message) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: message }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            let delay = 1000;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error('API Error');
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't process that.";
+                } catch (error) {
+                    if (i === 4) throw error;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        function appendMessage(text, role) {
+            const div = document.createElement('div');
+            div.className = `${role}-bubble p-4 max-w-[85%] animate-fade-in shadow-lg`;
+            
+            if (role === 'ai') {
+                const header = document.createElement('p');
+                header.className = "text-cyan-400 font-bold mb-1";
+                header.innerText = "Top Ai Guide";
+                div.appendChild(header);
+            }
+            
+            const content = document.createElement('p');
+            content.innerText = text;
+            div.appendChild(content);
+            
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            userInput.value = '';
+            appendMessage(text, 'user');
+            
+            typingIndicator.classList.remove('hidden');
+            
+            try {
+                const aiResponse = await callGemini(text);
+                typingIndicator.classList.add('hidden');
+                appendMessage(aiResponse, 'ai');
+            } catch (error) {
+                typingIndicator.classList.add('hidden');
+                appendMessage("I'm having trouble connecting right now. Please try again later.", 'ai');
+            }
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+    </script>
+</body>
+</html>
+

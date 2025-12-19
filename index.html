@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Dev.muhammad">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpg" href="web-icon.jpg">
+    <title>Top Ai - Home</title>
+    <link rel="stylesheet" href="stle.css">
+    <style>
+        /* Floating Chat Button for your new Assistant */
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4c3e85;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .ai-chat-btn:hover {
+            transform: scale(1.1);
+            background-color: #5d4ea5;
+            color: aqua;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <p><a href="about.html">About this App</a></p>
+        <h1 style="text-align: center;">Top Ai</h1>
+    </header>
+
+    <div id="parent">
+        <div class="child">
+            <p>Best Ai for Writing & content creation</p>
+            <p><a href="content_creation.html"><button type="submit">View</button></a></p>
+        </div><br>
+
+        <div class="child">
+            <p>Best Ai Tools for Design & Visual Content</p>
+            <p><a href="design.html"><button type="submit">View</button></a></p>
+        </div><br>
+
+        <div class="child">
+            <p>Best Ai for Business & Productivity</p>
+            <p><a href="business.html"><button type="submit">View</button></a></p>
+        </div><br>
+
+        <div class="child">
+            <p>Best Ai Tools for Learning</p>
+            <p><a href="learning.html"><button type="submit">View</button></a></p>
+        </div><br>
+
+        <div class="child">
+            <p>Best Ai Tools for On-the-go</p>
+            <p><a href="on-the-go.html"><button type="submit">View</button></a></p>
+        </div><br>
+    </div>
+
+    <!-- Integration: Link to your new Assistant -->
+    <a href="ai.html" class="ai-chat-btn">
+        <span>Ask Top Ai Guide</span>
+        <i class="fas fa-robot"></i>
+    </a>
+
+    <!-- Including FontAwesome for the robot icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</body>
+</html>
+
